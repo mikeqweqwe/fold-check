@@ -21,3 +21,4 @@ run_variant() {
 
 run_variant user bopomofo_tw "官方 bopomofo_tw（essay 詞庫）"
 run_variant user-iridium iridium_bpmf "銥注音（McBopomofo 台灣詞庫）"
+run_variant user-dafa iridium_bpmf "大發設定（銥注音+空白選字）"
