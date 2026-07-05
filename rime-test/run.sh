@@ -16,7 +16,7 @@ run_variant() {
   echo
   echo "######## 方案：$label ########"
   rime_deployer --build "$work" /usr/share/rime-data 2>&1 | tail -3
-  "$PROBE" "$work" "$schema"
+  "$PROBE" "$work" "$schema" < "$SRC/cases.txt"
 }
 
 run_variant user bopomofo_tw "官方 bopomofo_tw（essay 詞庫）"
