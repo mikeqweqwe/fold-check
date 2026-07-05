@@ -1,0 +1,28 @@
+name: RIME 簡拼測試
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['rime-test/**']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install librime
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y librime-bin librime1 || sudo apt-get install -y librime-bin
+
+      - name: Run cases
+        run: |
+          chmod +x rime-test/run.sh
+          ./rime-test/run.sh | tee rime-test-result.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rime-test-result
+          path: rime-test-result.txt
