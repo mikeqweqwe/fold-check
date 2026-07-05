@@ -34,6 +34,7 @@ int main(int argc, char** argv) {
     fprintf(stderr, "無法選 %s 方案\n", schema);
     return 1;
   }
+  RimeSetOption(s, "ascii_mode", False);
 
   char line[512];
   while (fgets(line, sizeof line, stdin)) {
