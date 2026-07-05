@@ -16,7 +16,8 @@ static void print_menu(RimeSessionId s) {
 }
 
 int main(int argc, char** argv) {
-  if (argc < 2) { fprintf(stderr, "usage: probe <user_dir>\n"); return 1; }
+  if (argc < 3) { fprintf(stderr, "usage: probe <user_dir> <schema_id>\n"); return 1; }
+  const char* schema = argv[2];
   RIME_STRUCT(RimeTraits, traits);
   traits.shared_data_dir = "/usr/share/rime-data";
   traits.user_data_dir = argv[1];
@@ -29,8 +30,8 @@ int main(int argc, char** argv) {
   if (RimeStartMaintenance(True)) RimeJoinMaintenanceThread();
 
   RimeSessionId s = RimeCreateSession();
-  if (!RimeSelectSchema(s, "bopomofo_tw")) {
-    fprintf(stderr, "無法選 bopomofo_tw 方案\n");
+  if (!RimeSelectSchema(s, schema)) {
+    fprintf(stderr, "無法選 %s 方案\n", schema);
     return 1;
   }
 

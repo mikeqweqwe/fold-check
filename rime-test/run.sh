@@ -1,17 +1,23 @@
 #!/usr/bin/env bash
-# 在 CI 上用 librime 跑注音簡拼測試：對 cases.txt 每組按鍵印出候選
+# 在 CI 上用 librime 跑注音簡拼測試：官方 bopomofo_tw 與 銥注音 iridium_bpmf 各跑一輪 cases 對比
 set -uo pipefail
 
 SRC="$(cd "$(dirname "$0")" && pwd)"
-WORK=$(mktemp -d)
-cp "$SRC/user/"* "$WORK/"
-printf 'patch:\n  schema_list:\n    - schema: bopomofo_tw\n  "menu/page_size": 9\n' > "$WORK/default.custom.yaml"
 
 echo "== 編譯探針 =="
-gcc "$SRC/probe.c" -o "$WORK/probe" $(pkg-config --cflags --libs rime 2>/dev/null || echo -lrime) || exit 1
+PROBE=$(mktemp)
+gcc "$SRC/probe.c" -o "$PROBE" $(pkg-config --cflags --libs rime 2>/dev/null || echo -lrime) || exit 1
 
-echo "== 建置方案 =="
-rime_deployer --build "$WORK" /usr/share/rime-data 2>&1 | tail -5
+run_variant() {
+  local dir="$1" schema="$2" label="$3"
+  local work
+  work=$(mktemp -d)
+  cp "$SRC/$dir/"* "$work/"
+  echo
+  echo "######## 方案：$label ########"
+  rime_deployer --build "$work" /usr/share/rime-data 2>&1 | tail -3
+  "$PROBE" "$work" "$schema"
+}
 
-echo "== 逐案測試 =="
-"$WORK/probe" "$WORK" < "$SRC/cases.txt"
+run_variant user bopomofo_tw "官方 bopomofo_tw（essay 詞庫）"
+run_variant user-iridium iridium_bpmf "銥注音（McBopomofo 台灣詞庫）"
