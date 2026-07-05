@@ -8,7 +8,11 @@ cp "$SRC/user/"* "$WORK/"
 cd "$WORK"
 
 echo "== rime_deployer 建置方案 =="
-rime_deployer --build . || { echo "deployer failed"; exit 1; }
+SHARED=/usr/share/rime-data
+if ! rime_deployer --build "$WORK" "$SHARED" 2>&1; then
+  echo "帶 shared dir 失敗，改試單參數"
+  rime_deployer --build "$WORK" 2>&1 || { echo "deployer failed"; rime_deployer 2>&1 | head -20; exit 1; }
+fi
 echo "-- build 產物 --"
 ls build 2>/dev/null || true
 
