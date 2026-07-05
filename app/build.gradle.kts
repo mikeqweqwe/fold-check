@@ -15,9 +15,13 @@ android {
     }
 
     val debugKeystoreFile = rootProject.file("keystore/debug.keystore")
+    val hasDebugKeystore = debugKeystoreFile.exists()
+    if (!hasDebugKeystore) {
+        logger.warn("keystore/debug.keystore 不存在，debug 改用預設簽名（換機安裝會簽章不符）")
+    }
 
     signingConfigs {
-        if (debugKeystoreFile.exists()) {
+        if (hasDebugKeystore) {
             getByName("debug") {
                 storeFile = debugKeystoreFile
                 storePassword = "foldcheck"
@@ -29,7 +33,7 @@ android {
 
     buildTypes {
         getByName("debug") {
-            if (debugKeystoreFile.exists()) {
+            if (hasDebugKeystore) {
                 signingConfig = signingConfigs.getByName("debug")
             }
         }

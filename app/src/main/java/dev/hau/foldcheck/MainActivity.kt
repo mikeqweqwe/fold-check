@@ -2,7 +2,6 @@ package dev.hau.foldcheck
 
 import android.graphics.Typeface
 import android.os.Bundle
-import android.view.View
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.Lifecycle
