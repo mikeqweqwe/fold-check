@@ -3,6 +3,14 @@
 #include <string.h>
 #include <rime_api.h>
 
+static void print_commit(RimeSessionId s) {
+  RIME_STRUCT(RimeCommit, commit);
+  if (RimeGetCommit(s, &commit)) {
+    printf("  上屏: %s\n", commit.text ? commit.text : "(空)");
+    RimeFreeCommit(&commit);
+  }
+}
+
 static void print_menu(RimeSessionId s) {
   RIME_STRUCT(RimeContext, ctx);
   if (!RimeGetContext(s, &ctx)) { printf("  (無 context)\n"); return; }
@@ -49,6 +57,7 @@ int main(int argc, char** argv) {
       printf("  (按鍵序列無效)\n");
       continue;
     }
+    print_commit(s);
     print_menu(s);
     if (RimeProcessKey(s, 0xff56, 0)) {
       printf("  -- 第二頁 --\n");
