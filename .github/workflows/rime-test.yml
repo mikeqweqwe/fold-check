@@ -15,7 +15,7 @@ jobs:
       - name: Install librime
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y librime-bin librime1 || sudo apt-get install -y librime-bin
+          sudo apt-get install -y librime-bin librime-dev gcc pkg-config
 
       - name: Run cases
         shell: bash

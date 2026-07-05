@@ -5,30 +5,13 @@ set -uo pipefail
 SRC="$(cd "$(dirname "$0")" && pwd)"
 WORK=$(mktemp -d)
 cp "$SRC/user/"* "$WORK/"
-cd "$WORK"
+printf 'patch:\n  schema_list:\n    - schema: bopomofo_tw\n  "menu/page_size": 9\n' > "$WORK/default.custom.yaml"
 
-echo "== rime_deployer 建置方案 =="
-SHARED=/usr/share/rime-data
-if ! rime_deployer --build "$WORK" "$SHARED" 2>&1; then
-  echo "帶 shared dir 失敗，改試單參數"
-  rime_deployer --build "$WORK" 2>&1 || { echo "deployer failed"; rime_deployer 2>&1 | head -20; exit 1; }
-fi
-echo "-- build 產物 --"
-ls build 2>/dev/null || true
+echo "== 編譯探針 =="
+gcc "$SRC/probe.c" -o "$WORK/probe" $(pkg-config --cflags --libs rime 2>/dev/null || echo -lrime) || exit 1
 
-CONSOLE=$(command -v rime_api_console || command -v rime_console || true)
-if [ -z "$CONSOLE" ]; then
-  echo "找不到 rime console 工具，已安裝檔案清單："
-  dpkg -L librime-bin 2>/dev/null || true
-  exit 1
-fi
-echo "console: $CONSOLE"
+echo "== 建置方案 =="
+rime_deployer --build "$WORK" /usr/share/rime-data 2>&1 | tail -5
 
-echo
 echo "== 逐案測試 =="
-grep -v '^#' "$SRC/cases.txt" | while IFS=$'\t' read -r keys expect note; do
-  [ -z "$keys" ] && continue
-  echo
-  echo "==== 按鍵: $keys | 期待: $expect | $note ===="
-  printf '%s\n' "$keys" | "$CONSOLE" 2>&1 | sed -n '1,40p'
-done
+"$WORK/probe" "$WORK" < "$SRC/cases.txt"
