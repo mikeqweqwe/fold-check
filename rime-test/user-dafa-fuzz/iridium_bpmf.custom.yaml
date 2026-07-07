@@ -1,0 +1,22 @@
+# 大發設定 + 方案3（ChatGPT 建議）：首字母簡拼改 fuzz + strict_spelling
+# 目標：保留簡拼快打詞（ㄌㄉㄏ→劉德華），但讓 fuzzy 簡拼不整段成句插隊（ㄅㄚㄉ→表達）
+patch:
+  "switches/@0/reset": 0
+  "speller/use_space": false
+  "speller/finals": "6347"
+  "speller/alphabet": "1qaz2wsxedcrfv5tgbyhnujm8ik,9ol.0p;/-6347"
+  "menu/alternative_select_keys": ""
+  "engine/processors":
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  # 方案3：把首字母簡拼 rule1(@26)、rule3(@28) 從 abbrev 改成 fuzz；rule2(@27) 免聲調保持不動
+  "speller/algebra/@26": fuzz/^([bpmfdtnlgkhjqxZCSrzcsiuv]).+$/$1/
+  "speller/algebra/@28": fuzz/^([bpmfdtnlgkhjqxZCSrzcsiuv]).+(\d)$/$1$2/
+  "translator/strict_spelling": true
+  "translator/enable_completion": false

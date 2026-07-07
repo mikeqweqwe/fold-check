@@ -26,3 +26,4 @@ run_variant user bopomofo_tw "官方 bopomofo_tw（essay 詞庫）"
 run_variant user-iridium iridium_bpmf "銥注音（McBopomofo 台灣詞庫）"
 run_variant user-dafa iridium_bpmf "大發設定（銥注音+空白選字）" /usr/share/rime-data user-iridium
 run_variant user-dafa iridium_bpmf "大發-手機模擬（共享目錄全空，等同 APK 實機部署）" "$EMPTY_SHARED" user-iridium
+run_variant user-dafa-fuzz iridium_bpmf "大發-方案3（首字母簡拼改 fuzz+strict_spelling，驗表達消失/劉德華保留）" "$EMPTY_SHARED" user-iridium
